@@ -7,6 +7,7 @@
   <title>Calendrier Scolaire</title>
   <style>
     html, body {
+      position: relative;
       font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
       padding: 0;
       margin: 0;
@@ -47,9 +48,11 @@
     #date_day {font-size: 15vw; font-weight: 500;}
     #date_month, #date_year {font-size: 4vw;}
     .activity {font-size: 4vw;}
+    .version {position: absolute; bottom: 4px; right: 4px; color:#aaa;}
   </style>
 </head>
 <body>
+  <div class="version">v0.1</div>
   <div class="date-column">
     <div id="date_day"></div>
     <div id="date_month"></div>
@@ -70,9 +73,9 @@
   </div>
   <script type="application/javascript">
     (function () {
-      const simoneDays = {1: 'Edu', 4: 'Art', 7: 'Edu', 9: 'Art'}
-      const isaacDays = {1: 'Anglais', 2: 'Edu', 3: 'Edu', 4: 'Art', 5: 'Ang', 6: 'Ang', 8: 'Art', 9: 'Edu', 10: 'Edu'}
-      const offDays = [
+      var simoneDays = {1: 'Edu', 4: 'Art', 7: 'Edu', 9: 'Art'}
+      var isaacDays = {1: 'Anglais', 2: 'Edu', 3: 'Edu', 4: 'Art', 5: 'Ang', 6: 'Ang', 8: 'Art', 9: 'Edu', 10: 'Edu'}
+      var offDays = [
         new Date(2021, 8, 6, 0, 0, 0, 0),
         new Date(2021, 8, 17, 0, 0, 0, 0),
         new Date(2021, 9, 7, 0, 0, 0, 0),
@@ -103,23 +106,23 @@
         new Date(2022, 3, 18, 0, 0, 0, 0),
         new Date(2022, 4, 23, 0, 0, 0, 0)
       ];
-      const firstDayOfSchool = new Date(2021, 7, 27, 0, 0, 0, 0)
-      const cycleLength = 10
+      var firstDayOfSchool = new Date(2021, 7, 27, 0, 0, 0, 0)
+      var cycleLength = 10
       
-      const fmt = new Intl.DateTimeFormat('fr-CA', {month: 'long'})
-      const dayNode = document.getElementById('date_day')
-      const monthNode = document.getElementById('date_month')
-      const yearNode = document.getElementById('date_year')
-      const schoolDayNode = document.getElementById('school_day')
-      const isaacNode = document.getElementById('isaac')
-      const simoneNode = document.getElementById('simone')
+      var fmt = new Intl.DateTimeFormat('fr-CA', {month: 'long'})
+      var dayNode = document.getElementById('date_day')
+      var monthNode = document.getElementById('date_month')
+      var yearNode = document.getElementById('date_year')
+      var schoolDayNode = document.getElementById('school_day')
+      var isaacNode = document.getElementById('isaac')
+      var simoneNode = document.getElementById('simone')
 
-      const schoolDays = (from, to) => {
-        const d1 = new Date(from.getTime())
-        const d2 = new Date(to.getTime())
+      var schoolDays = (from, to) => {
+        var d1 = new Date(from.getTime())
+        var d2 = new Date(to.getTime())
         d1.setHours(0, 0, 0, 0)
         d2.setHours(0, 0, 0, 0)
-        let numOfSchoolDays = 1
+        var numOfSchoolDays = 1
 
         while(d1 < d2){
           d1.setDate(d1.getDate() + 1)
@@ -129,8 +132,8 @@
         return numOfSchoolDays
       }
 
-      const update = () => {
-        const currentDate = new Date()
+      var update = () => {
+        var currentDate = new Date()
 
         dayNode.textContent = currentDate.getDate()
         monthNode.textContent = fmt.format(currentDate)
@@ -150,10 +153,10 @@
         }
       }
 
-      const isWeekend = d => d.getDay() == 0 || d.getDay() == 6
-      const isWeekday = d => d.getDay() != 0 && d.getDay() != 6
-      const isOffday = d => offDays.map(Number).indexOf(+d) >= 0
-      const isSchoolDay = d => offDays.map(Number).indexOf(+d) < 0
+      var isWeekend = d => d.getDay() == 0 || d.getDay() == 6
+      var isWeekday = d => d.getDay() != 0 && d.getDay() != 6
+      var isOffday = d => offDays.map(Number).indexOf(+d) >= 0
+      var isSchoolDay = d => offDays.map(Number).indexOf(+d) < 0
 
       update()
       setInterval(update, 3600 * 1000)
