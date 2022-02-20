@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calendrier Scolaire</title>
+  <style>
+    html, body {
+      font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+      padding: 0;
+      margin: 0;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+    }
+    body {
+      display: flex;
+    }
+    .date-column {
+      width: 40%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+    .children-column {
+      width: 60%;
+    }
+    #school_day {
+      height: 20%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 3vw;
+    }
+    .children {
+      display: flex;
+      height: 80%;
+    }
+    .child-column {
+      width: 50%;
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+    }
+    #date_day {font-size: 15vw; font-weight: 500;}
+    #date_month, #date_year {font-size: 4vw;}
+    .activity {font-size: 4vw;}
+  </style>
+</head>
+<body>
+  <div class="date-column">
+    <div id="date_day"></div>
+    <div id="date_month"></div>
+    <div id="date_year"></div>
+  </div>
+  <div class="children-column">
+    <div id="school_day"></div>
+    <div class="children">
+      <div class="child-column simone">
+        <h2>Simone</h2>
+        <div class="activity" id="simone"></div>
+      </div>
+      <div class="child-column isaac">
+        <h2>Isaac</h2>
+        <div class="activity" id="isaac"></div>
+      </div>
+    </div>
+  </div>
+  <script type="application/javascript">
+    (function () {
+      const simoneDays = {1: 'Edu', 4: 'Art', 7: 'Edu', 9: 'Art'}
+      const isaacDays = {1: 'Anglais', 2: 'Edu', 3: 'Edu', 4: 'Art', 5: 'Ang', 6: 'Ang', 8: 'Art', 9: 'Edu', 10: 'Edu'}
+      const offDays = [
+        new Date(2021, 8, 6, 0, 0, 0, 0),
+        new Date(2021, 8, 17, 0, 0, 0, 0),
+        new Date(2021, 9, 7, 0, 0, 0, 0),
+        new Date(2021, 9, 11, 0, 0, 0, 0),
+        new Date(2021, 10, 12, 0, 0, 0, 0),
+        new Date(2021, 11, 3, 0, 0, 0, 0),
+        new Date(2021, 11, 23, 0, 0, 0, 0),
+        new Date(2021, 11, 24, 0, 0, 0, 0),
+        new Date(2021, 11, 27, 0, 0, 0, 0),
+        new Date(2021, 11, 28, 0, 0, 0, 0),
+        new Date(2021, 11, 29, 0, 0, 0, 0),
+        new Date(2021, 11, 30, 0, 0, 0, 0),
+        new Date(2021, 11, 31, 0, 0, 0, 0),
+        new Date(2022, 0, 3, 0, 0, 0, 0),
+        new Date(2022, 0, 4, 0, 0, 0, 0),
+        new Date(2022, 0, 5, 0, 0, 0, 0),
+        new Date(2022, 0, 6, 0, 0, 0, 0),
+        new Date(2022, 0, 7, 0, 0, 0, 0),
+        new Date(2022, 0, 10, 0, 0, 0, 0),
+        new Date(2022, 1, 11, 0, 0, 0, 0),
+        new Date(2022, 1, 28, 0, 0, 0, 0),
+        new Date(2022, 2, 1, 0, 0, 0, 0),
+        new Date(2022, 2, 2, 0, 0, 0, 0),
+        new Date(2022, 2, 3, 0, 0, 0, 0),
+        new Date(2022, 2, 4, 0, 0, 0, 0),
+        new Date(2022, 2, 25, 0, 0, 0, 0),
+        new Date(2022, 3, 15, 0, 0, 0, 0),
+        new Date(2022, 3, 18, 0, 0, 0, 0),
+        new Date(2022, 4, 23, 0, 0, 0, 0)
+      ];
+      const firstDayOfSchool = new Date(2021, 7, 27, 0, 0, 0, 0)
+      const cycleLength = 10
+      
+      const fmt = new Intl.DateTimeFormat('fr-CA', {month: 'long'})
+      const dayNode = document.getElementById('date_day')
+      const monthNode = document.getElementById('date_month')
+      const yearNode = document.getElementById('date_year')
+      const schoolDayNode = document.getElementById('school_day')
+      const isaacNode = document.getElementById('isaac')
+      const simoneNode = document.getElementById('simone')
+
+      const schoolDays = (from, to) => {
+        const d1 = new Date(from.getTime())
+        const d2 = new Date(to.getTime())
+        d1.setHours(0, 0, 0, 0)
+        d2.setHours(0, 0, 0, 0)
+        let numOfSchoolDays = 1
+
+        while(d1 < d2){
+          d1.setDate(d1.getDate() + 1)
+          if(isSchoolDay(d1) && isWeekday(d1)) numOfSchoolDays++
+        }
+
+        return numOfSchoolDays
+      }
+
+      const update = () => {
+        const currentDate = new Date()
+
+        dayNode.textContent = currentDate.getDate()
+        monthNode.textContent = fmt.format(currentDate)
+        yearNode.textContent = currentDate.getFullYear()
+
+        if(isWeekend(currentDate)) {
+          schoolDayNode.textContent = "C'est la fin de semaine 🌞"
+        } else if (isOffday(currentDate)) {
+          schoolDayNode.textContent = "C'est congé 🎉"
+        } else {
+          let schoolDay = schoolDays(firstDayOfSchool, currentDate) % cycleLength
+          if(schoolDay == 0) schoolDay = 10
+
+          schoolDayNode.textContent = `Nous sommes un jour d'école #${schoolDay}`
+          isaacNode.textContent = isaacDays[schoolDay] || '-'
+          simoneNode.textContent = simoneDays[schoolDay] || '-'
+        }
+      }
+
+      const isWeekend = d => d.getDay() == 0 || d.getDay() == 6
+      const isWeekday = d => d.getDay() != 0 && d.getDay() != 6
+      const isOffday = d => offDays.map(Number).indexOf(+d) >= 0
+      const isSchoolDay = d => offDays.map(Number).indexOf(+d) < 0
+
+      update()
+      setInterval(update, 3600 * 1000)
+    }());
+  </script>
+</body>
+</html>
