@@ -52,7 +52,7 @@
   </style>
 </head>
 <body>
-  <div class="version">v0.1</div>
+  <div class="version">v0.2</div>
   <div class="date-column">
     <div id="date_day"></div>
     <div id="date_month"></div>
@@ -109,7 +109,7 @@
       var firstDayOfSchool = new Date(2021, 7, 27, 0, 0, 0, 0)
       var cycleLength = 10
       
-      var fmt = new Intl.DateTimeFormat('fr-CA', {month: 'long'})
+      //var fmt = new Intl.DateTimeFormat('fr-CA', {month: 'long'})
       var dayNode = document.getElementById('date_day')
       var monthNode = document.getElementById('date_month')
       var yearNode = document.getElementById('date_year')
@@ -136,7 +136,7 @@
         var currentDate = new Date()
 
         dayNode.textContent = currentDate.getDate()
-        monthNode.textContent = fmt.format(currentDate)
+        monthNode.textContent = currentDate.getMonth()
         yearNode.textContent = currentDate.getFullYear()
 
         if(isWeekend(currentDate)) {
