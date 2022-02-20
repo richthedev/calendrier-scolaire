@@ -18,26 +18,28 @@
     body {
       display: flex;
     }
-    .date-column {
+    .left-column {
       width: 40%;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
     }
-    .children-column {
+    .right-column {
+      display: flex;
+      flex-direction: column;
       width: 60%;
     }
     #school_day {
-      height: 20%;
       display: flex;
       justify-content: center;
       align-items: center;
       font-size: 3vw;
+      flex-grow: 1;
     }
-    .children {
+    #children {
       display: flex;
-      height: 80%;
+      flex-grow: 8;
     }
     .child-column {
       width: 50%;
@@ -49,18 +51,19 @@
     #date_month, #date_year {font-size: 4vw;}
     .activity {font-size: 4vw;}
     .version {position: absolute; bottom: 4px; right: 4px; color:#aaa;}
+    .hidden {display: none !important;}
   </style>
 </head>
 <body>
-  <div class="version">v0.2</div>
-  <div class="date-column">
+  <div class="version">v0.3</div>
+  <div class="left-column">
     <div id="date_day"></div>
     <div id="date_month"></div>
     <div id="date_year"></div>
   </div>
-  <div class="children-column">
+  <div class="right-column">
     <div id="school_day"></div>
-    <div class="children">
+    <div id="children">
       <div class="child-column simone">
         <h2>Simone</h2>
         <div class="activity" id="simone"></div>
@@ -71,10 +74,10 @@
       </div>
     </div>
   </div>
-  <script type="application/javascript">
-    (function () {
-      var simoneDays = {1: 'Edu', 4: 'Art', 7: 'Edu', 9: 'Art'}
-      var isaacDays = {1: 'Anglais', 2: 'Edu', 3: 'Edu', 4: 'Art', 5: 'Ang', 6: 'Ang', 8: 'Art', 9: 'Edu', 10: 'Edu'}
+  <script>
+    var update = function () {
+      var simoneDays = {1: 'Edu', 4: 'Art', 7: 'Edu', 9: 'Art'};
+      var isaacDays = {1: 'Anglais', 2: 'Edu', 3: 'Edu', 4: 'Art', 5: 'Ang', 6: 'Ang', 8: 'Art', 9: 'Edu', 10: 'Edu'};
       var offDays = [
         new Date(2021, 8, 6, 0, 0, 0, 0),
         new Date(2021, 8, 17, 0, 0, 0, 0),
@@ -106,61 +109,63 @@
         new Date(2022, 3, 18, 0, 0, 0, 0),
         new Date(2022, 4, 23, 0, 0, 0, 0)
       ];
-      var firstDayOfSchool = new Date(2021, 7, 27, 0, 0, 0, 0)
-      var cycleLength = 10
+      var firstDayOfSchool = new Date(2021, 7, 27, 0, 0, 0, 0);
+      var cycleLength = 10;
       
-      //var fmt = new Intl.DateTimeFormat('fr-CA', {month: 'long'})
-      var dayNode = document.getElementById('date_day')
-      var monthNode = document.getElementById('date_month')
-      var yearNode = document.getElementById('date_year')
-      var schoolDayNode = document.getElementById('school_day')
-      var isaacNode = document.getElementById('isaac')
-      var simoneNode = document.getElementById('simone')
+      // var fmt = new Intl.DateTimeFormat('fr-CA', {month: 'long'})
+      var dayNode = document.getElementById('date_day');
+      var monthNode = document.getElementById('date_month');
+      var yearNode = document.getElementById('date_year');
+      var schoolDayNode = document.getElementById('school_day');
+      var childrenNode = document.getElementById('children');
+      var isaacNode = document.getElementById('isaac');
+      var simoneNode = document.getElementById('simone');
 
-      var schoolDays = (from, to) => {
-        var d1 = new Date(from.getTime())
-        var d2 = new Date(to.getTime())
-        d1.setHours(0, 0, 0, 0)
-        d2.setHours(0, 0, 0, 0)
-        var numOfSchoolDays = 1
+      var isWeekend = function(d) { return d.getDay() == 0 || d.getDay() == 6 };
+      var isWeekday = function(d) { return d.getDay() != 0 && d.getDay() != 6 };
+      var isOffday = function(d) { return offDays.map(Number).indexOf(+d) >= 0 };
+      var isSchoolDay = function(d) { return offDays.map(Number).indexOf(+d) < 0 };
 
-        while(d1 < d2){
-          d1.setDate(d1.getDate() + 1)
-          if(isSchoolDay(d1) && isWeekday(d1)) numOfSchoolDays++
+      var schoolDays = function(from, to) {
+        var d1 = new Date(from.getTime());
+        var d2 = new Date(to.getTime());
+        d1.setHours(0, 0, 0, 0);
+        d2.setHours(0, 0, 0, 0);
+        var numOfSchoolDays = 1;
+
+        while(d1 < d2) {
+          d1.setDate(d1.getDate() + 1);
+          if(isSchoolDay(d1) && isWeekday(d1)) numOfSchoolDays++;
         }
 
-        return numOfSchoolDays
+        return numOfSchoolDays;
       }
 
-      var update = () => {
-        var currentDate = new Date()
+      var currentDate = new Date();
 
-        dayNode.textContent = currentDate.getDate()
-        monthNode.textContent = currentDate.getMonth()
-        yearNode.textContent = currentDate.getFullYear()
+      dayNode.textContent = currentDate.getDate();
+      monthNode.textContent = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'][currentDate.getMonth()];
+      yearNode.textContent = currentDate.getFullYear();
 
-        if(isWeekend(currentDate)) {
-          schoolDayNode.textContent = "C'est la fin de semaine 🌞"
-        } else if (isOffday(currentDate)) {
-          schoolDayNode.textContent = "C'est congé 🎉"
-        } else {
-          let schoolDay = schoolDays(firstDayOfSchool, currentDate) % cycleLength
-          if(schoolDay == 0) schoolDay = 10
+      if(isWeekend(currentDate)) {
+        childrenNode.classList.add('hidden');
+        schoolDayNode.textContent = "C'est la fin de semaine 🌞";
+      } else if (isOffday(currentDate)) {
+        childrenNode.classList.add('hidden');
+        schoolDayNode.textContent = "C'est congé 🎉";
+      } else {
+        childrenNode.classList.remove('hidden');
+        var schoolDay = schoolDays(firstDayOfSchool, currentDate) % cycleLength;
+        if(schoolDay == 0) schoolDay = 10;
 
-          schoolDayNode.textContent = `Nous sommes un jour d'école #${schoolDay}`
-          isaacNode.textContent = isaacDays[schoolDay] || '-'
-          simoneNode.textContent = simoneDays[schoolDay] || '-'
-        }
+        schoolDayNode.textContent = `Nous sommes un jour d'école #${schoolDay}`;
+        isaacNode.textContent = isaacDays[schoolDay] || '-';
+        simoneNode.textContent = simoneDays[schoolDay] || '-';
       }
+    }
 
-      var isWeekend = d => d.getDay() == 0 || d.getDay() == 6
-      var isWeekday = d => d.getDay() != 0 && d.getDay() != 6
-      var isOffday = d => offDays.map(Number).indexOf(+d) >= 0
-      var isSchoolDay = d => offDays.map(Number).indexOf(+d) < 0
-
-      update()
-      setInterval(update, 3600 * 1000)
-    }());
+    update();
+    setInterval(update, 3600 * 1000);
   </script>
 </body>
 </html>
