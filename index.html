@@ -6,14 +6,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="apple-mobile-wep-app-capable" content="yes">
   <title>Calendrier Scolaire</title>
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-  <link rel="manifest" href="/site.webmanifest">
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+  <link rel="manifest" href="site.webmanifest">
   <style>
     html, body {
       position: relative;
-      font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+      font-family: Helvetica, sans-serif;
       padding: 0;
       margin: 0;
       width: 100vw;
@@ -35,28 +35,23 @@
       flex-direction: column;
       width: 60%;
     }
-    #school_day {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-size: 3vw;
-      flex-grow: 1;
-    }
-    #children {
-      display: flex;
-      flex-grow: 8;
+    #off_day, #weekend, #school_day {
+      text-align: center;
+      margin: auto;
     }
     .child-column {
       width: 50%;
-      display: flex;
-      align-items: center;
-      flex-direction: column;
+      text-align: center;
     }
+    #school_day { font-size: 3vw; }
+    #off_day, #weekend { font-size: 8vw; }
+    #children { display: flex; }
     #date_day {font-size: 15vw; font-weight: 500;}
     #date_month, #date_year {font-size: 4vw;}
     .activity {font-size: 4vw;}
     .version {position: absolute; bottom: 4px; right: 4px; color:#aaa;}
     .hidden {display: none !important;}
+    .emoji {font-size: 16vw;}
   </style>
 </head>
 <body>
@@ -67,17 +62,21 @@
     <div id="date_year"></div>
   </div>
   <div class="right-column">
-    <div id="school_day"></div>
-    <div id="children">
-      <div class="child-column simone">
-        <h2>Simone</h2>
-        <div class="activity" id="simone"></div>
-      </div>
-      <div class="child-column isaac">
-        <h2>Isaac</h2>
-        <div class="activity" id="isaac"></div>
+    <div id="school_day">
+      <div id="school_day_number"></div>
+      <div id="children">
+        <div class="child-column simone">
+          <h3>Simone</h3>
+          <div class="activity" id="simone"></div>
+        </div>
+        <div class="child-column isaac">
+          <h3>Isaac</h3>
+          <div class="activity" id="isaac"></div>
+        </div>
       </div>
     </div>
+    <div id="weekend">C'est la fin de semaine ☀️</div>
+    <div id="off_day">C'est congé 🎉</div>
   </div>
   <script>
     var update = function () {
@@ -116,15 +115,18 @@
       ];
       var firstDayOfSchool = new Date(2021, 7, 27, 0, 0, 0, 0);
       var cycleLength = 10;
-      
+
       // var fmt = new Intl.DateTimeFormat('fr-CA', {month: 'long'})
       var dayNode = document.getElementById('date_day');
       var monthNode = document.getElementById('date_month');
       var yearNode = document.getElementById('date_year');
       var schoolDayNode = document.getElementById('school_day');
+      var schoolDayNumberNode = document.getElementById('school_day_number');
       var childrenNode = document.getElementById('children');
       var isaacNode = document.getElementById('isaac');
       var simoneNode = document.getElementById('simone');
+      var weekendNode = document.getElementById('weekend');
+      var offDayNode = document.getElementById('off_day');
 
       var isWeekend = function(d) { return d.getDay() == 0 || d.getDay() == 6 };
       var isWeekday = function(d) { return d.getDay() != 0 && d.getDay() != 6 };
@@ -146,24 +148,29 @@
         return numOfSchoolDays;
       }
 
-      var currentDate = new Date();
+      var currentDate = new Date(2022, 1, 21);
 
       dayNode.textContent = currentDate.getDate();
       monthNode.textContent = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'][currentDate.getMonth()];
       yearNode.textContent = currentDate.getFullYear();
 
       if(isWeekend(currentDate)) {
-        childrenNode.classList.add('hidden');
-        schoolDayNode.textContent = "C'est la fin de semaine 🌞";
+        schoolDayNode.classList.add('hidden');
+        weekendNode.classList.remove('hidden');
+        offDayNode.classList.add('hidden');
       } else if (isOffday(currentDate)) {
-        childrenNode.classList.add('hidden');
-        schoolDayNode.textContent = "C'est congé 🎉";
+        schoolDayNode.classList.add('hidden');
+        weekendNode.classList.add('hidden');
+        offDayNode.classList.remove('hidden');
       } else {
-        childrenNode.classList.remove('hidden');
+        schoolDayNode.classList.remove('hidden');
+        weekendNode.classList.add('hidden');
+        offDayNode.classList.add('hidden');
+
         var schoolDay = schoolDays(firstDayOfSchool, currentDate) % cycleLength;
         if(schoolDay == 0) schoolDay = 10;
 
-        schoolDayNode.textContent = `Nous sommes un jour d'école #${schoolDay}`;
+        schoolDayNumberNode.textContent = `Nous sommes un jour d'école #${schoolDay}`;
         isaacNode.textContent = isaacDays[schoolDay] || '-';
         simoneNode.textContent = simoneDays[schoolDay] || '-';
       }
