@@ -51,11 +51,11 @@
     .activity {font-size: 4vw;}
     .version {position: absolute; bottom: 4px; right: 4px; color:#aaa;}
     .hidden {display: none !important;}
-    .emoji {font-size: 16vw;}
+    .emoji {font-size: 100px;}
   </style>
 </head>
 <body>
-  <div class="version">v0.5</div>
+  <div class="version">v0.6</div>
   <div class="left-column">
     <div id="date_day"></div>
     <div id="date_month"></div>
@@ -75,8 +75,8 @@
         </div>
       </div>
     </div>
-    <div id="weekend">C'est la fin de semaine ☀️</div>
-    <div id="off_day">C'est congé 🎉</div>
+    <div id="weekend">C'est la fin de semaine <span class="emoji">☀️</span></div>
+    <div id="off_day">C'est congé <span class="emoji">🎉</span></div>
   </div>
   <script>
     var update = function () {
