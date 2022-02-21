@@ -51,7 +51,7 @@
     .activity {font-size: 4vw;}
     .version {position: absolute; bottom: 4px; right: 4px; color:#aaa;}
     .hidden {display: none !important;}
-    .emoji {font-size: 100px;}
+    .svg {width: 100px; height: 100px}
   </style>
 </head>
 <body>
@@ -75,8 +75,8 @@
         </div>
       </div>
     </div>
-    <div id="weekend">C'est la fin de semaine <span class="emoji">☀️</span></div>
-    <div id="off_day">C'est congé <span class="emoji">🎉</span></div>
+    <div id="weekend"><div>C'est la fin de semaine</div><img class="svg" src="sun.svg"></div>
+    <div id="off_day"><div>C'est congé</div><img class="svg" src="tada.svg"></div>
   </div>
   <script>
     var update = function () {
