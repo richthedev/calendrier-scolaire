@@ -55,7 +55,7 @@
   </style>
 </head>
 <body>
-  <div class="version">v0.7</div>
+  <div class="version">v0.8</div>
   <div class="left-column">
     <div id="date_day"></div>
     <div id="date_month"></div>
@@ -116,7 +116,6 @@
       var firstDayOfSchool = new Date(2021, 7, 27, 0, 0, 0, 0);
       var cycleLength = 10;
 
-      // var fmt = new Intl.DateTimeFormat('fr-CA', {month: 'long'})
       var dayNode = document.getElementById('date_day');
       var monthNode = document.getElementById('date_month');
       var yearNode = document.getElementById('date_year');
@@ -149,6 +148,7 @@
       }
 
       var currentDate = new Date();
+      currentDate.setHours(0, 0, 0, 0);
 
       dayNode.textContent = currentDate.getDate();
       monthNode.textContent = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'][currentDate.getMonth()];
