@@ -33,22 +33,25 @@
     .right-column {
       display: flex;
       flex-direction: column;
+      align-items: center;
+      justify-content: center;
       width: 60%;
     }
-    #off_day, #weekend, #school_day {
+    #off_day, #weekend, #school_day, #next_school_day {
       text-align: center;
-      margin: auto;
+      width: 100%;
     }
     .child-column {
       width: 50%;
       text-align: center;
     }
-    #school_day { font-size: 3vw; }
-    #off_day, #weekend { font-size: 8vw; }
-    #children { display: flex; }
+    #school_day {font-size: 3vw;}
+    #next_school_day {font-size: 1.5vw; color: #999;}
+    #off_day, #weekend {font-size: 8vw; }
     #date_day {font-size: 15vw; font-weight: 500;}
     #date_month, #date_year {font-size: 4vw;}
-    .activity {font-size: 4vw;}
+    .children {display: flex; width: 100%;}
+    .activity {font-size: 2em;}
     .version {position: absolute; bottom: 4px; right: 4px; color:#aaa;}
     .hidden {display: none !important;}
     .svg {width: 100px; height: 100px}
@@ -64,7 +67,7 @@
   <div class="right-column">
     <div id="school_day">
       <div id="school_day_number"></div>
-      <div id="children">
+      <div class="children">
         <div class="child-column simone">
           <h3>Simone</h3>
           <div class="activity" id="simone"></div>
@@ -77,6 +80,17 @@
     </div>
     <div id="weekend"><div>C'est la fin de semaine</div><img class="svg" src="sun.svg"></div>
     <div id="off_day"><div>C'est congé</div><img class="svg" src="tada.svg"></div>
+    <div id="next_school_day">
+      <h3>Demain</h3>
+      <div class="children">
+        <div class="child-column simone">
+          <div class="activity" id="simone_next"></div>
+        </div>
+        <div class="child-column isaac">
+          <div class="activity" id="isaac_next"></div>
+        </div>
+      </div>
+    </div>
   </div>
   <script>
     var update = function () {
@@ -120,10 +134,12 @@
       var monthNode = document.getElementById('date_month');
       var yearNode = document.getElementById('date_year');
       var schoolDayNode = document.getElementById('school_day');
+      var nextSchoolDayNode = document.getElementById('next_school_day');
       var schoolDayNumberNode = document.getElementById('school_day_number');
-      var childrenNode = document.getElementById('children');
-      var isaacNode = document.getElementById('isaac');
       var simoneNode = document.getElementById('simone');
+      var simoneNextNode = document.getElementById('simone_next');
+      var isaacNode = document.getElementById('isaac');
+      var isaacNextNode = document.getElementById('isaac_next');
       var weekendNode = document.getElementById('weekend');
       var offDayNode = document.getElementById('off_day');
 
@@ -132,9 +148,9 @@
       var isOffday = function(d) { return offDays.map(Number).indexOf(+d) >= 0 };
       var isSchoolDay = function(d) { return offDays.map(Number).indexOf(+d) < 0 };
 
-      var schoolDays = function(from, to) {
-        var d1 = new Date(from.getTime());
-        var d2 = new Date(to.getTime());
+      var schoolDayNumber = function(date) {
+        var d1 = new Date(firstDayOfSchool.getTime());
+        var d2 = new Date(date.getTime());
         d1.setHours(0, 0, 0, 0);
         d2.setHours(0, 0, 0, 0);
         var numOfSchoolDays = 1;
@@ -144,7 +160,10 @@
           if(isSchoolDay(d1) && isWeekday(d1)) numOfSchoolDays++;
         }
 
-        return numOfSchoolDays;
+        var number = numOfSchoolDays % cycleLength;
+        if(number == 0) number = 10;
+
+        return number;
       }
 
       var currentDate = new Date();
@@ -167,12 +186,24 @@
         weekendNode.classList.add('hidden');
         offDayNode.classList.add('hidden');
 
-        var schoolDay = schoolDays(firstDayOfSchool, currentDate) % cycleLength;
-        if(schoolDay == 0) schoolDay = 10;
+        var number = schoolDayNumber(currentDate);
 
-        schoolDayNumberNode.textContent = `Nous sommes un jour d'école #${schoolDay}`;
-        isaacNode.textContent = isaacDays[schoolDay] || '-';
-        simoneNode.textContent = simoneDays[schoolDay] || '-';
+        schoolDayNumberNode.textContent = `Nous sommes un jour d'école #${number}`;
+        simoneNode.textContent = simoneDays[number] || '-';
+        isaacNode.textContent = isaacDays[number] || '-';
+      }
+
+      var tomorrowDate = new Date(currentDate);
+      tomorrowDate.setHours(0, 0, 0, 0);
+      tomorrowDate.setDate(tomorrowDate.getDate() + 1);
+
+      if(isSchoolDay(tomorrowDate)) {
+        nextSchoolDayNode.classList.remove('hidden');
+        var number = schoolDayNumber(tomorrowDate);
+        simoneNextNode.textContent = simoneDays[number] || '-';
+        isaacNextNode.textContent = isaacDays[number] || '-';
+      } else {
+        nextSchoolDayNode.classList.add('hidden');
       }
     }
 
